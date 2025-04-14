@@ -1,0 +1,11 @@
+# Bỏ qua thư mục chứa các package
+node_modules/
+
+# File môi trường
+.env
+
+# Log file
+npm-debug.log*
+
+# VSCode settings
+.vscode/git add .gitignore
