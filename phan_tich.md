@@ -180,6 +180,5 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
 - Luồng sự kiện thay thế:
   - Nếu chưa có phản hồi, hệ thống hiển thị thông báo “Chưa có phản hồi từ quản lý”.
 # <a name="_toc195535413"></a>3. Mô hình lớp 
-![A diagram of a software application
+![Mô tả ảnh]([https://github.com/username/repository/blob/main/images/0cf5848a-d466-4696-851c-8dd16574220d.jpg](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/0cf5848a-d466-4696-851c-8dd16574220d.jpg)
 
-AI-generated content may be incorrect.](Aspose.Words.6df0437e-a392-4178-a422-be2a0c8994b9.002.png)
