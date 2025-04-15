@@ -50,6 +50,11 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
 - Xem báo cáo công việc hàng ngày từ nhân viên
   - Xem nội dung báo cáo do nhân viên gửi
   - Đánh giá hiệu quả làm việc theo từng ngày hoặc theo công việc
+- Gửi lời nhắn cho nhân viên
+  - gửi tin nhắn trực tiếp liên quan đên công việc hoặc phản hồi nhanh
+  - gửi thông báo hoặc nhắc nhở công việc
+- Đặt lịch hẹn với nhân viên
+  - Tạo lịch hẹn làm việc, họp, trao đổi công việc
 ## <a name="_toc195535401"></a>1.2 Hoạt động và yêu cầu chức năng nhân viên:
 - Đăng nhập hệ thống
 - Nhận và xem danh sách công việc được giao	
@@ -64,6 +69,11 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
   - Gửi báo cáo cho quản lý xem và đánh giá
 - Xem phản hồi từ quản lý (nếu có):
   - Xem các nhận xét, đánh giá từ quản lý về công việc hoặc báo cáo
+- Gửi lời nhắn cho quản lý
+  - Gửi tin nhắn hỏi đáp, trao đổi công việc nhanh
+  - gửi thông báo xin phép, báo cáo sự cố
+- Đặt lịch hẹn với quản lý
+  -Gửi đề xuất lịch hẹn để trao đổi, họp hoặc trình bày báo cáo
 
 # <a name="_toc195535402"></a>2. Sơ đồ Use Case
 ![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/3d62f353-7b7b-4d2f-a661-86238f9d44fd.jpg)
