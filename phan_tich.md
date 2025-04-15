@@ -50,6 +50,9 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
 - Xem báo cáo công việc hàng ngày từ nhân viên
   - Xem nội dung báo cáo do nhân viên gửi
   - Đánh giá hiệu quả làm việc theo từng ngày hoặc theo công việc
+- Nhận thông báo khi nhân viên không gửi báo cáo
+  - Hệ thống sẽ tự động kiểm tra tần suất gửi báo cáo hàng ngày
+  - Nếu quá hạn quản lý không nhận được báo cáo từ một nhân viên, hệ thống sẽ gửi thông báo cho quản lý để kịp thời theo dõi và xử lý
 ## <a name="_toc195535401"></a>1.2 Hoạt động và yêu cầu chức năng nhân viên:
 - Đăng nhập hệ thống
 - Nhận và xem danh sách công việc được giao	
