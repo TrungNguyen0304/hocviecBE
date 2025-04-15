@@ -68,7 +68,7 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
 - Xem phản hồi từ quản lý (nếu có):
   - Xem các nhận xét, đánh giá từ quản lý về công việc hoặc báo cáo
 # <a name="_toc195535402"></a>2. Sơ đồ Use Case
-![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/3d62f353-7b7b-4d2f-a661-86238f9d44fd.jpg)
+![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/cec68007-e3c1-4602-bc31-64b44f8c560f.jpg)
 
 
 ## <a name="_toc195535403"></a>2.1 Mô tả sơ đồ use case
@@ -196,6 +196,6 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
 - Luồng sự kiện thay thế:
   - Nếu chưa có phản hồi, hệ thống hiển thị thông báo “Chưa có phản hồi từ quản lý”.
 # <a name="_toc195535413"></a>3. Mô hình lớp 
-![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/0cf5848a-d466-4696-851c-8dd16574220d.jpg)
+![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/f7eff077-f949-4458-bc0f-0d6fd88382e1.jpg)
 
 
