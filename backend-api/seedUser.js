@@ -9,17 +9,17 @@ const createTestUser = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
 
-    const existingUser = await User.findOne({ email: "test11@example.com" });
+    const existingUser = await User.findOne({ email: "admin123@gmail.com" });
 
     if (existingUser) {
       console.log(" User already exists");
     } else {
       const hashedPassword = await bcrypt.hash("123456", 10);
       await User.create({
-        name: "Test User",
-        email: "test11@example.com",
+        name: "Nguyễn Đình Trung",
+        email: "admin123@gmail.com",
         password: hashedPassword,
-        role: "employee",
+        role: "manager",
       });
       console.log(" User created");
     }

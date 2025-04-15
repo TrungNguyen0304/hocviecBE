@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db.js");
 const userRoute = require("./Route/userRoute.js")
 const protectedRoute = require("./Route/protectedRoute.js")
+const managerRoute = require("./Route/managerRoute.js")
+const employeeRoute = require("./Route/employeeRoute.js")
+
 
 dotenv.config();
 const app = express();
@@ -15,8 +18,10 @@ connectDB();
 
 app.use("/api/user",userRoute );
 app.use("/api/protected",protectedRoute );
+app.use("/api/manager",managerRoute );
+app.use("/api/employee",employeeRoute );
 
-
+  
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
