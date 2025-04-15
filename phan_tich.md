@@ -140,6 +140,19 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
   - Quản lý nắm được tình hình công việc hàng ngày.
 - Luồng sự kiện thay thế:
   - Nếu nhân viên chưa gửi báo cáo, hệ thống thông báo “Chưa có báo cáo cho ngày này”.
+### <a name="_toc195535408"></a>2.1.4 Nhận thông báo khi nhân viên không gửi báo cáo
+- Tác nhân chính: quản lý
+- Điều kiện tiên quyết: Quản lý đăng nhập vào hệ thống
+- Luồng sự kiến chính:
+  - Hệ thống theo dõi tần suất gửi báo cáo của từng nhân viên theo ngày.
+  - Nếu một nhân viên không gửi báo cáo công việc quán hạn:
+      - Hệ thống tự động tạo thông báo.
+      - Gửi thông báo đến tài khoản của quản lý
+  - Quản lý nhận thông báo và truy cập thông tin chi tiết (tên nhân viên, ngày không gửi báo cáo,...).
+- Kết quả mong đợi:
+  - Quản lý được thông báo kịp thời khi có nhân viên không gửi báo cáo.
+  - Giúp quản lý theo dõi được tiến độ và tính chủ động của nhân viên.
+- Luồng sự kiện thay thế:
 ### <a name="_toc195535409"></a>2.1.5 Gửi báo cáo công việc hằng ngày
 - Tác nhân chính: Nhân viên
 - Điều kiện tiên quyết: Nhân viên đã đăng nhập.
