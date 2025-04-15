@@ -68,7 +68,7 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
 - Xem phản hồi từ quản lý (nếu có):
   - Xem các nhận xét, đánh giá từ quản lý về công việc hoặc báo cáo
 # <a name="_toc195535402"></a>2. Sơ đồ Use Case
-![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/3d62f353-7b7b-4d2f-a661-86238f9d44fd.jpg)
+![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/cec68007-e3c1-4602-bc31-64b44f8c560f.jpg)
 
 
 ## <a name="_toc195535403"></a>2.1 Mô tả sơ đồ use case
