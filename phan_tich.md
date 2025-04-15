@@ -196,6 +196,6 @@ Hệ thống quản lý công việc giữa quản lý và nhân viên được 
 - Luồng sự kiện thay thế:
   - Nếu chưa có phản hồi, hệ thống hiển thị thông báo “Chưa có phản hồi từ quản lý”.
 # <a name="_toc195535413"></a>3. Mô hình lớp 
-![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/0cf5848a-d466-4696-851c-8dd16574220d.jpg)
+![Mô tả ảnh](https://github.com/TrungNguyen0304/hocviecBE/blob/main/images/f7eff077-f949-4458-bc0f-0d6fd88382e1.jpg)
 
 
