@@ -12,16 +12,16 @@ const taskSchema = new mongoose.Schema({
   assignedTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", 
-    required: true
+    required: false
   },
   deadline: {
     type: Date,
-    required: true
+    required: false
   },
   status: {
     type: String,
-    enum: ["pending", "in_progress", "completed", "cancelled"],
-    default: "pending"
+    enum: ["draft", "in_progress", "completed", "cancelled","pending"],
+    default: "draft"
   },
   notes: {
     type: String,

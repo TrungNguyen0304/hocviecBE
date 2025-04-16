@@ -27,4 +27,36 @@ const viewAssignedTasks = async (req, res) => {
     }
 };
 
-module.exports = { viewAssignedTasks };
+const updateTaskStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const userId = req.user._id // lay tu middleware neu cs
+
+        const allowedStatuses = ["pending", "in_progress", "completed"]
+
+        if (!allowedStatuses.includes(status)) {
+            return res.status(404).json({ message: "Trạng thái không hợp lệ" })
+
+        }
+        const task = await Task.findById(id);
+        if (!task) {
+            return res.status(404).json({ message: "công việc không tồn tại" });
+
+        }
+
+        if (task.assignedTo?.toString() !== userId.toString()) {
+            return res.status(403).json({ message: "Bạn không có quyền cập nhật công việc này." });
+        }
+
+        task.status = status;
+        await task.save();
+        res.status(200).json({ massege: "cập nhật trạng thái thành công", task });
+
+    } catch (error) {
+        res.status(500).json({ massege: "lỗi server", error: error.message })
+    }
+};
+
+
+module.exports = { viewAssignedTasks, updateTaskStatus };

@@ -5,6 +5,13 @@ const {
     showAllEmployees,
     deleteEmployee,
     createTask,
+    updateTask,
+    showallTask,
+    deleteTask,
+    assignTask,
+    viewEmployeeTask,
+    getUnassignedTasks,
+    getAssignedTasks
 } = require('../Controller/manager.js');
 const authenticateJWT = require('../middleware/auth.js');
 const authorize = require('../middleware/authorize.js');
@@ -19,6 +26,17 @@ router.get('/showall/', authenticateJWT, authorize('manager'), showAllEmployees)
 
 // giao việc cho nhân viên 
 router.post('/createTask', authenticateJWT, authorize('manager'), createTask);
+router.get('/showallTask', authenticateJWT, authorize('manager'), showallTask);
+router.put('/updateTask/:id', authenticateJWT, authorize('manager'), updateTask);
+router.delete('/deleteTask/:id', authenticateJWT, authorize('manager'), deleteTask);
 
+// gán việc cho nhân viên
+router.put('/assignTask/:id', authenticateJWT, authorize('manager'), assignTask);
 
+//xem danh sách công việc của một nhân viên cụ thể
+router.get('/viewEmployeeTask/:id', authenticateJWT, authorize('manager'), viewEmployeeTask);
+// lấy công việc chưa giao
+router.get('/unassigned/', authenticateJWT, authorize('manager'), getUnassignedTasks);
+// lấy ra công việc đã giao 
+router.get('/getassigned/', authenticateJWT, authorize('manager'), getAssignedTasks);
 module.exports = router;

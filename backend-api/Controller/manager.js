@@ -129,28 +129,25 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-// giao task cho nhân viên
+// tao task 
 
 const createTask = async (req, res) => {
   try {
-    const { title, description, assignedTo, deadline, status, notes } = req.body;
+    const { title, description, status, notes } = req.body;
 
-    if (!title || !assignedTo || !deadline) {
-      return res.status(400).json({ message: "Thiếu thông tin bắt buộc." });
+    if (!title) {
+      return res.status(400).json({ message: "Thiếu tiêu đề công việc." });
     }
 
-    const employee = await user.findById(assignedTo);
-    if (!employee || employee.role !== "employee") {
-      return res.status(404).json({ message: "Nhân viên không hợp lệ." });
-    }
+    const allowedStatuses = ["pending", "in_progress", "completed", "cancelled", "draft"];
+    const taskStatus = allowedStatuses.includes(status) ? status : "draft";
 
     const newTask = new Task({
       title,
       description,
-      assignedTo: employee._id, // đảm bảo lưu đúng ObjectId
-      deadline,
-      status,
+      status: taskStatus,
       notes
+      // không cần deadline ở đây
     });
 
     await newTask.save();
@@ -158,27 +155,209 @@ const createTask = async (req, res) => {
     res.status(201).json({
       message: "Tạo công việc thành công.",
       task: {
-        id: newTask._id,
+        _id: newTask._id,
         title: newTask.title,
-        assignedTo: {
-          id: employee._id,
-          name: employee.name
-        },
-        deadline: newTask.deadline,
-        status: newTask.status
+        status: newTask.status,
+        notes: newTask.notes
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server", error: error.message });
+  }
+};
+const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, status, notes } = req.body;
+
+    const task = await Task.findById(id);
+    if (!task) {
+      return res.status(404).json({ message: "Công việc không tồn tại." });
+    }
+    if (title) {
+      task.title = title;
+    }
+    if (description) {
+      task.description = description;
+    }
+    if (status) {
+      const allowedStatuses = ["pending", "in_progress", "completed", "cancelled", "draft"];
+      if (allowedStatuses.includes(status)) {
+        task.status = status;
+      } else {
+        return res.status(400).json({ message: "Trạng thái không hợp lệ." });
+      }
+    }
+    if (notes) {
+      task.notes = notes;
+    }
+
+    // Lưu công việc đã được cập nhật
+    await task.save();
+
+    res.status(200).json({
+      message: "Cập nhật công việc thành công.",
+      task: {
+        _id: task._id,
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        notes: task.notes
       }
     });
   } catch (error) {
     res.status(500).json({ message: "Lỗi server.", error: error.message });
   }
 };
+const showallTask = async (req, res) => {
+  try {
+    const tasks = await Task.find();
 
+    if (tasks.length == 0) {
+      return res.status(404).json({ massage: "không có công việc nào" })
+    }
 
+    res.status(200).json({
+      massage: "danh sách công việc",
+      tasks: tasks.map(task => ({
+        _id: task._id,
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        notes: task.notes,
+      }))
+    })
+  } catch (error) {
+    res.status(500).json({ massage: "lỗi server", error: error.massage })
+  }
+}
+const deleteTask = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const task = await Task.findById(id)
+    if (!task) {
+      res.status(404).json({ message: "Công việc không tồn tại" })
+    }
+    await Task.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "Xóa công việc thành công.",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server.", error: error.message });
+  }
+};
+
+// gán task cho nhân viên
+const assignTask = async (req, res) => {
+  try {
+    const { id } = req.params; // id của task
+    const { assignedTo, deadline } = req.body;
+
+    if (!assignedTo || !deadline) {
+      return res.status(400).json({ message: "Thiếu thông tin bắt buộc (assignedTo, deadline)." });
+    }
+
+    // Tìm task
+    const task = await Task.findById(id);
+    if (!task) {
+      return res.status(404).json({ message: "Công việc không tồn tại." });
+    }
+
+    // Tìm nhân viên
+    const employee = await user.findById(assignedTo);
+    if (!employee || employee.role !== "employee") {
+      return res.status(404).json({ message: "Nhân viên không hợp lệ." });
+    }
+
+    // Gán thông tin
+    task.assignedTo = assignedTo;
+    task.deadline = deadline;
+    task.status = "pending";
+
+    await task.save();
+
+    res.status(200).json({
+      message: "Gán công việc thành công.",
+      task: {
+        id: task._id,
+        title: task.title,
+        assignedTo: {
+          id: employee._id,
+          name: employee.name
+        },
+        deadline: task.deadline,
+        status: task.status
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server.", error: error.message });
+  }
+};
+
+// xem danh sách công việc của một nhân viên cụ thể,
+const viewEmployeeTask = async (req, res) => {
+  try {
+    const { id } = req.params; // id của nhân viên
+
+    // Kiểm tra nhân viên tồn tại
+    const employee = await user.findById(id);
+    if (!employee || employee.role !== "employee") {
+      return res.status(404).json({ message: "Nhân viên không hợp lệ." });
+    }
+
+    // Lấy danh sách task được gán cho nhân viên
+    const tasks = await Task.find({ assignedTo: id });
+
+    res.status(200).json({
+      message: `Danh sách công việc của nhân viên ${employee.name}`,
+      tasks
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server.", error: error.message });
+  }
+};
+
+//Lấy công việc chưa giao
+const getUnassignedTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ assignedTo: { $exists: false } }); // hoặc assignedTo: null
+
+    res.status(200).json({
+      message: "Danh sách công việc chưa được giao.",
+      tasks
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server.", error: error.message });
+  }
+};
+
+// lấy ra công việc đã giao 
+const getAssignedTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ assignedTo: { $ne: null } }).populate("assignedTo", "name email");
+
+    res.status(200).json({
+      message: "Danh sách công việc đã được giao cho nhân viên.",
+      tasks
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server.", error: error.message });
+  }
+};
 
 module.exports = {
   createEmployee,
   updateEmpoyee,
   showAllEmployees,
   deleteEmployee,
-  createTask
+  createTask,
+  updateTask,
+  showallTask,
+  deleteTask,
+  assignTask,
+  viewEmployeeTask,
+  getUnassignedTasks,
+  getAssignedTasks
 };
