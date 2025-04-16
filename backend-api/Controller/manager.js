@@ -1,13 +1,14 @@
 const { use } = require("passport");
 const user = require("../models/user")
 const Task = require("../models/task");
+const Report = require("../models/report")
 const bcrypt = require("bcrypt");
+const Feedback = require("../models/feedback");
 
 const createEmployee = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Kiểm tra email đã tồn tại chưa
     const existingUser = await user.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email đã tồn tại." });
@@ -43,14 +44,11 @@ const updateEmpoyee = async (req, res) => {
     const { id } = req.params;
     const { name, email, password } = req.body;
 
-    // tim use theo id
-
     const existingUser = await user.findById(id);
     if (!existingUser) {
       return res.status(404).json({ message: "Nhân viên không tồn tại" });
     }
 
-    // neu email moi khac va da ton tai thi -> bao loi 
     if (email && email !== existingUser.email) {
       const emailTaken = await user.findOne({ email });
       if (emailTaken && emailTaken._id.toString() !== id) {
@@ -58,12 +56,10 @@ const updateEmpoyee = async (req, res) => {
       }
       existingUser.email = email;
     }
-    // Cập nhật name nếu có
     if (name) {
       existingUser.name = name;
     }
 
-    // Nếu có password mới thì mã hóa lại
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       existingUser.password = hashedPassword;
@@ -89,7 +85,6 @@ const showAllEmployees = async (req, res) => {
     // Lấy tất cả nhân viên
     const employees = await user.find({ role: "employee" });
 
-    // Nếu không có nhân viên
     if (employees.length === 0) {
       return res.status(404).json({ message: "Không có nhân viên nào." });
     }
@@ -147,7 +142,6 @@ const createTask = async (req, res) => {
       description,
       status: taskStatus,
       notes
-      // không cần deadline ở đây
     });
 
     await newTask.save();
@@ -251,7 +245,7 @@ const deleteTask = async (req, res) => {
 // gán task cho nhân viên
 const assignTask = async (req, res) => {
   try {
-    const { id } = req.params; // id của task
+    const { id } = req.params; 
     const { assignedTo, deadline } = req.body;
 
     if (!assignedTo || !deadline) {
@@ -299,15 +293,13 @@ const assignTask = async (req, res) => {
 // xem danh sách công việc của một nhân viên cụ thể,
 const viewEmployeeTask = async (req, res) => {
   try {
-    const { id } = req.params; // id của nhân viên
+    const { id } = req.params;
 
-    // Kiểm tra nhân viên tồn tại
     const employee = await user.findById(id);
     if (!employee || employee.role !== "employee") {
       return res.status(404).json({ message: "Nhân viên không hợp lệ." });
     }
 
-    // Lấy danh sách task được gán cho nhân viên
     const tasks = await Task.find({ assignedTo: id });
 
     res.status(200).json({
@@ -347,6 +339,98 @@ const getAssignedTasks = async (req, res) => {
   }
 };
 
+// xem báo cáo của nhân viên
+const viewReport = async (req, res) => {
+  try {
+    const reports = await Report.find()
+      .populate("task", "title deadline status")
+      .populate("employee", "name email");
+    res.status(200).json({
+      message: "lấy danh sách báo cáo thành công",
+      total: reports.length,
+      reports
+    });
+  } catch (error) {
+    res.status(500).json({ massage: "lỗi server.", error: error.message })
+  }
+}
+
+// xem báo cáo từng nhân viên
+const viewReportEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const employee = await user.findById(id);
+    if (!employee) {
+      return res.status(404).json({ message: "Nhân viên không tồn tại." });
+    }
+
+    if (id !== userId && req.user.role !== "manager") {
+      return res.status(403).json({ message: "Bạn không có quyền xem báo cáo của nhân viên này." });
+    }
+
+    // Tìm tất cả các báo cáo của nhân viên này và populate thông tin task
+    const reports = await Report.find({ employee: id })
+      .populate("task", "title deadline status")
+      .populate("employee", "name email");
+
+    if (reports.length === 0) {
+      return res.status(404).json({ message: "Nhân viên này chưa gửi báo cáo nào." });
+    }
+
+    res.status(200).json({
+      message: "Lấy báo cáo của nhân viên thành công.",
+      reports
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server.", error: error.message });
+  }
+};
+
+// đánh giá báo cáo của nhân viên
+const evaluateReport = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { comment, score } = req.body;
+    const managerId = req.user._id; 
+
+    if (typeof score !== 'number' || score < 0 || score > 10) {
+      return res.status(400).json({ message: 'Điểm đánh giá phải từ 0 đến 10.' });
+    }
+
+    const report = await Report.findById(id);
+    if (!report) {
+      return res.status(404).json({ message: 'Báo cáo không tồn tại.' });
+    }
+
+    const existingFeedback = await Feedback.findOne({ report: id });
+    if (existingFeedback) {
+      return res.status(400).json({ message: 'Báo cáo này đã được đánh giá.' });
+    }
+
+    const feedback = new Feedback({
+      report: id,
+      manager: managerId,
+      comment,
+      score
+    });
+
+    await feedback.save();
+
+    report.feedback = feedback._id;
+    await report.save();
+
+    res.status(201).json({
+      message: 'Đánh giá báo cáo thành công.',
+      feedback
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Lỗi server.', error: error.message });
+  }
+};
+
 module.exports = {
   createEmployee,
   updateEmpoyee,
@@ -359,5 +443,8 @@ module.exports = {
   assignTask,
   viewEmployeeTask,
   getUnassignedTasks,
-  getAssignedTasks
+  getAssignedTasks,
+  viewReport,
+  viewReportEmployee,
+  evaluateReport
 };

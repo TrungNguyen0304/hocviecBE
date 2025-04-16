@@ -11,7 +11,10 @@ const {
     assignTask,
     viewEmployeeTask,
     getUnassignedTasks,
-    getAssignedTasks
+    getAssignedTasks,
+    viewReport,
+    viewReportEmployee,
+    evaluateReport
 } = require('../Controller/manager.js');
 const authenticateJWT = require('../middleware/auth.js');
 const authorize = require('../middleware/authorize.js');
@@ -35,8 +38,20 @@ router.put('/assignTask/:id', authenticateJWT, authorize('manager'), assignTask)
 
 //xem danh sách công việc của một nhân viên cụ thể
 router.get('/viewEmployeeTask/:id', authenticateJWT, authorize('manager'), viewEmployeeTask);
+
 // lấy công việc chưa giao
 router.get('/unassigned/', authenticateJWT, authorize('manager'), getUnassignedTasks);
+
 // lấy ra công việc đã giao 
 router.get('/getassigned/', authenticateJWT, authorize('manager'), getAssignedTasks);
+
+// xem danh sach báo cáo 
+router.get('/viewreport/', authenticateJWT, authorize('manager'), viewReport);
+
+// xem danh sách báo cáo từng nhân viên cụ thể
+router.get('/viewReportEmployee/:id', authenticateJWT, authorize('manager'), viewReportEmployee);
+
+// đánh giá báo cáo của nhân viên
+router.post('/evaluateReport/:id', authenticateJWT, authorize('manager'), evaluateReport);
+
 module.exports = router;
