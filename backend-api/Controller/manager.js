@@ -4,6 +4,7 @@ const Task = require("../models/task");
 const Report = require("../models/report")
 const bcrypt = require("bcrypt");
 const Feedback = require("../models/feedback");
+const Notification = require("../models/notification")
 
 const createEmployee = async (req, res) => {
   try {
@@ -245,7 +246,7 @@ const deleteTask = async (req, res) => {
 // gán task cho nhân viên
 const assignTask = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
     const { assignedTo, deadline } = req.body;
 
     if (!assignedTo || !deadline) {
@@ -391,9 +392,9 @@ const viewReportEmployee = async (req, res) => {
 // đánh giá báo cáo của nhân viên
 const evaluateReport = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // id nay cua report
     const { comment, score } = req.body;
-    const managerId = req.user._id; 
+    const managerId = req.user._id;
 
     if (typeof score !== 'number' || score < 0 || score > 10) {
       return res.status(400).json({ message: 'Điểm đánh giá phải từ 0 đến 10.' });
@@ -431,6 +432,25 @@ const evaluateReport = async (req, res) => {
   }
 };
 
+// xem thông báo khi nhân viên báo quá hạn
+const viewNotification = async (req, res) => {
+  try {
+    const notifications = await Notification.find()
+      .populate("employee", "name email")
+      // .populate("manager", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      massage: "Lấy danh sách thông báo thành công",
+      total: notifications.length,
+      notifications
+    });
+
+  } catch (error) {
+    res.status(500).json({ massage: "lỗi server", error: error.message })
+  }
+}
+
 module.exports = {
   createEmployee,
   updateEmpoyee,
@@ -446,5 +466,6 @@ module.exports = {
   getAssignedTasks,
   viewReport,
   viewReportEmployee,
-  evaluateReport
+  evaluateReport,
+  viewNotification
 };

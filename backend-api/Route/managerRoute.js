@@ -14,7 +14,8 @@ const {
     getAssignedTasks,
     viewReport,
     viewReportEmployee,
-    evaluateReport
+    evaluateReport,
+    viewNotification
 } = require('../Controller/manager.js');
 const authenticateJWT = require('../middleware/auth.js');
 const authorize = require('../middleware/authorize.js');
@@ -53,5 +54,8 @@ router.get('/viewReportEmployee/:id', authenticateJWT, authorize('manager'), vie
 
 // đánh giá báo cáo của nhân viên
 router.post('/evaluateReport/:id', authenticateJWT, authorize('manager'), evaluateReport);
+
+// xem thông báo khi nhân viên báo cáo quan hạn
+router.get('/viewNotification/', authenticateJWT, authorize('manager'), viewNotification);
 
 module.exports = router;
