@@ -7,7 +7,7 @@ const protectedRoute = require("./Route/protectedRoute.js")
 const managerRoute = require("./Route/managerRoute.js")
 const employeeRoute = require("./Route/employeeRoute.js")
 const notificationRoute = require("./Route/notificationRoute.js")
-
+const authRoute = require("./Route/authRoute.js")
 
 dotenv.config();
 const app = express();
@@ -22,7 +22,7 @@ app.use("/api/protected",protectedRoute );
 app.use("/api/manager",managerRoute );
 app.use("/api/employee",employeeRoute );
 app.use("/api/notification",notificationRoute );
-
+app.use("/auth", authRoute);
   
 
 app.listen(PORT, () => {
