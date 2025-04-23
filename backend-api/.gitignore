@@ -1,0 +1,7 @@
+# Bỏ qua thư mục chứa các package
+node_modules/
+
+# File môi trường
+.env
+
+backend-api-5a7e6-firebase-adminsdk-fbsvc-54cd29d64b.json

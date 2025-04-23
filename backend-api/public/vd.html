@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FCM Token Demo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+        }
+
+        #token {
+            color: green;
+            white-space: pre-wrap;
+        }
+
+        #error {
+            color: red;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>🎯 FCM Web Token Demo</h2>
+    <button onclick="requestFcmToken()">📲 Lấy FCM Token</button>
+    <div id="token"></div>
+    <div id="error"></div>
+
+    <script type="module">
+        // 1. Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-messaging.js";
+
+        // 2. Cấu hình Firebase (THAY = thông tin thật)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZb5yKlepg6PJXR1ZXSkawLZsC0cKygcg",
+            authDomain: "backend-api-5a7e6.firebaseapp.com",
+            projectId: "backend-api-5a7e6",
+            storageBucket: "backend-api-5a7e6.firebasestorage.app",
+            messagingSenderId: "868163805151",
+            appId: "1:868163805151:web:b8ded0868ab1c939e3ee6a",
+            measurementId: "G-LVFTLC22NP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        // 3. Đăng ký Service Worker
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/firebase-messaging-sw.js")
+                .then(() => console.log("✅ Service Worker registered"))
+                .catch(err => console.error("❌ SW registration failed", err));
+        }
+
+        // 4. Hàm lấy FCM Token 
+        async function requestFcmToken() {
+            const tokenEl = document.getElementById("token");
+            const errorEl = document.getElementById("error");
+            tokenEl.textContent = "";
+            errorEl.textContent = "";
+
+            try {
+                if (Notification.permission === "denied") {
+                    errorEl.textContent = "⚠️ Bạn đã chặn thông báo. Hãy bật lại trong phần cài đặt trình duyệt.";
+                    return;
+                }
+
+                const permission = await Notification.requestPermission();
+                if (permission !== "granted") {
+                    errorEl.textContent = "⚠️ Bạn chưa cấp quyền nhận thông báo.";
+                    return;
+                }
+
+                const token = await getToken(messaging, {
+                    vapidKey: "BGLq9gdlTjlpJdojvvRAHC0a0LzVtXXbCFdvvS1tXy_T53XWnyK9dSMbeA5pp1fgaCBcCDeEjSuxZeqN4SeUaEM" // Lấy từ Firebase Console > Cloud Messaging
+                });
+
+                if (token) {
+                    console.log("✅ Token:", token);
+                    tokenEl.textContent = `✅ FCM Token:\n${token}`;
+                } else {
+                    errorEl.textContent = "⚠️ Không lấy được FCM token.";
+                }
+            } catch (err) {
+                console.error("❌ Lỗi lấy FCM token:", err);
+                errorEl.textContent = "❌ Lỗi lấy FCM token: " + err.message;
+            }
+        }
+
+        // Cho button gọi được
+        window.requestFcmToken = requestFcmToken;
+    </script>
+</body>
+
+</html>
