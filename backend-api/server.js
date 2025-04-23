@@ -12,7 +12,8 @@ const employeeRoute = require("./Route/employeeRoute.js");
 const notificationRoute = require("./Route/notificationRoute.js");
 const authRoute = require("./Route/authRoute.js");
 
-const { setupSocket } = require("./socket/socketHandler.js"); // NEW
+const { setupSocket } = require("./socket/socketHandler.js");   
+const {startScheduleCheck} = require("./socket/socketSchedule.js")
 
 dotenv.config();
 const app = express();
@@ -37,6 +38,7 @@ app.use("/auth", authRoute);
 
 // SOCKET setup
 setupSocket(io);
+startScheduleCheck();
 
 // Khởi động server
 const PORT = process.env.PORT || 8001;

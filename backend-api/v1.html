@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO Client Test</title>
+  </head>
+  <body>
+    <h2>Listening for task-overdue</h2>
+    <pre id="log"></pre>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      const socket = io("http://localhost:8001");
+      const userId = "67fe04ff44af4e4f7ea42a31";
+
+      socket.on("connect", () => {
+        document.getElementById("log").textContent += `✅ Connected\n`;
+        socket.emit("user-online", userId);
+      });
+
+      socket.on("disconnect", () => {
+        document.getElementById("log").textContent += `❌ Disconnected\n`;
+      });
+
+      socket.on("task-overdue", (data) => {
+        document.getElementById("log").textContent +=
+          `🔔 task-overdue: ${JSON.stringify(data, null, 2)}\n`;
+      });
+    </script>
+  </body>
+</html>

@@ -124,7 +124,7 @@ const notifyTask = async ({ userId, task }) => {
       deadline: task.deadline,
       status: task.status,
     });
-    console.log(`✅ Sent socket to user room: ${userId}`);
+    console.log(`Sent socket to user room: ${userId}`);
   } else {
     const user = await User.findById(userId);
     if (user?.fcmToken) {
@@ -140,6 +140,38 @@ const notifyTask = async ({ userId, task }) => {
   }
 };
 
+// Gửi thông báo khi task trễ deadline
+const notifyTaskOverdue = async ({ userId, task }) => {
+  const io = getIO();
 
+  const title = "Task trễ deadline";
+  const body = `Task "${task.title}" của bạn đã trễ deadline!`;
+  const userIdStr = String(userId);
+  console.log("Checking online for:", userIdStr);
+  console.log("isUserOnline:", isUserOnline(userIdStr));
+  if (isUserOnline(userId)) {
+    io.to(userId).emit("task-overdue", {
+      id: task._id,
+      title: task.title,
+      notes: task.notes,
+      deadline: task.deadline,
+      status: task.status,
+      message: body,
+    });
+    console.log(`Sent socket to user room: ${userId}`);
+  } else {
+    const user = await User.findById(userId);
+    if (user?.fcmToken) {
+      try {
+        await sendNotification(user.fcmToken, title, body);
+        console.log("Sent FCM to offline user");
+      } catch (error) {
+        console.error("Error sending FCM:", error.message);
+      }
+    } else {
+      console.log("No FCM token for user.");
+    }
+  }
+};
 
-module.exports = { checkMissedReports, markNotificationAsRead, notifyTask };
+module.exports = { checkMissedReports, markNotificationAsRead, notifyTask, notifyTaskOverdue };
